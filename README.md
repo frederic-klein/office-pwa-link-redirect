@@ -1,19 +1,19 @@
 ## Why?
 
-The native Microsoft Teams application for Linux is not well maintained, so we switched to the [Teams PWA in Google Chrome](https://techcommunity.microsoft.com/t5/microsoft-teams-blog/microsoft-teams-progressive-web-app-now-available-on-linux/bc-p/3674458/highlight/true#M11387%2309), which works rather well.
-We still want to use firefox as our default browser without maintaining active login sessions in multiple browsers. Clicking links in teams therefor becomes a bit annoying.
+The native Microsoft Teams application for Linux is not well maintained, so we switched to the [Teams PWA in Google Chrome](https://techcommunity.microsoft.com/t5/microsoft-teams-blog/microsoft-teams-progressive-web-app-now-available-on-linux/bc-p/3674458/highlight/true#M11387%2309), which works rather well. The same applies to the Outlook PWA.
+We still want to use firefox as our default browser without maintaining active login sessions in multiple browsers. Clicking links in Teams or Outlook therefor becomes a bit annoying.
 
 ## How does it work?
 
-This little experiment introduces two new schemes for (ftl and ftls for **f**irefox **t**eams **l**inks) and an browser extension for chrome (works for edge as well). Clicked links in the Teams PWA are opened in Chrome and the extension modifies https to ftls and http to ftl, which causes Chrome to prompt for approval to open the `FTL Handler`. The FTL Handler is defined by the `firefox-ftl.desktop` file, which reverts the http/https replacement and opens the links in firefox.
+This little experiment introduces two new schemes for (ftl and ftls for **f**irefox **t**eams **l**inks) and an browser extension for chrome (works for edge as well). Clicked links in the Teams and Outlook PWAs are opened in Chrome and the extension modifies https to ftls and http to ftl, which causes Chrome to prompt for approval to open the `FTL Handler`. The FTL Handler is defined by the `firefox-ftl.desktop` file, which reverts the http/https replacement and opens the links in firefox.
 
-Links to `teams.microsoft.com`, `teams.cloud.microsoft`, `login.microsoftonline.com`, `outlook.office.com`, `outlook.office365.com` and `outlook.cloud.microsoft` (and their subdomains) are left alone so that internal Teams navigation and sign-in flows keep working inside the PWA.
+Links to `teams.microsoft.com`, `teams.cloud.microsoft`, `login.microsoftonline.com`, `outlook.office.com`, `outlook.office365.com` and `outlook.cloud.microsoft` (and their subdomains) are left alone so that internal Teams/Outlook navigation and sign-in flows keep working inside the PWAs.
 
 To avoid dropping an active Teams call when a link is clicked, the redirect is triggered via a short-lived hidden iframe instead of navigating the top-level document.
 
 ## Installation
 
-1. clone this repo `git clone git@github.com:frederic-klein/teams-pwa-link-redirect.git`
+1. clone this repo `git clone git@github.com:frederic-klein/office-pwa-link-redirect.git`
 1. install the handler script: `sudo install -m 755 ubuntu/ftl-open /usr/local/bin/ftl-open`
 1. make the firefox-ftl.desktop file available in your system: `sudo cp ubuntu/firefox-ftl.desktop /usr/share/applications/`
 1. install the chrome extension
@@ -22,16 +22,28 @@ To avoid dropping an active Teams call when a link is clicked, the redirect is t
     1. enable developer mode
     1. select Load unpacked
     1. select the cloned repo folder
-    1. reopen the teams pwa or `ctrl+f5`
+    1. reopen the Teams/Outlook PWAs or `ctrl+f5`
 1. associate the schemes with the desktop file:
 ```BASH
 xdg-mime default firefox-ftl.desktop x-scheme-handler/ftl
 xdg-mime default firefox-ftl.desktop x-scheme-handler/ftls
 ```
 
+## Upgrading to 1.2.0 (Outlook support)
+
+Version 1.2.0 extends the extension to the Outlook PWA. Since it no longer covers only Teams, the repository was renamed from `teams-pwa-link-redirect` to `office-pwa-link-redirect`. GitHub redirects the old URL, so existing clones keep working; optionally update your remote:
+
+```BASH
+git remote set-url origin git@github.com:frederic-klein/office-pwa-link-redirect.git
+```
+
+After pulling, reload the extension in [chrome://extensions/](chrome://extensions/) (unpacked extensions don't pick up manifest changes on their own) and reopen the Outlook PWA or `ctrl+f5`. The handler script and `.desktop` file are unchanged.
+
+Chrome references the unpacked extension by its folder path. If you rename your local clone, select Load unpacked again with the new folder.
+
 ## Upgrading from a version before the `ftl-open` handler script
 
-Earlier versions handled the scheme rewrite with an inline shell pipeline in `firefox-ftl.desktop`. That interpolated the clicked URL into a shell command string, so a crafted `ftl:`/`ftls:` URL could execute arbitrary commands as your user ([#14](https://github.com/frederic-klein/teams-pwa-link-redirect/pull/14)). Any page you visited could trigger it.
+Earlier versions handled the scheme rewrite with an inline shell pipeline in `firefox-ftl.desktop`. That interpolated the clicked URL into a shell command string, so a crafted `ftl:`/`ftls:` URL could execute arbitrary commands as your user ([#14](https://github.com/frederic-klein/office-pwa-link-redirect/pull/14)). Any page you visited could trigger it.
 
 If you installed before that fix, an already-copied `.desktop` file in `/usr/share/applications/` is still the vulnerable one — pulling the repo alone changes nothing. Install the script and overwrite the old handler:
 
@@ -104,4 +116,4 @@ EOF
 Thanks to the following contributors for improving this helper ♡
 
 * Ryan Cole https://github.com/ryanc-me
-* Freubert https://github.com/Freubert — fix for Teams calls being dropped when clicking a link (hidden-iframe redirect, [#12](https://github.com/frederic-klein/teams-pwa-link-redirect/pull/12))
+* Freubert https://github.com/Freubert — fix for Teams calls being dropped when clicking a link (hidden-iframe redirect, [#12](https://github.com/frederic-klein/office-pwa-link-redirect/pull/12))
