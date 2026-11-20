@@ -29,6 +29,18 @@ xdg-mime default firefox-ftl.desktop x-scheme-handler/ftl
 xdg-mime default firefox-ftl.desktop x-scheme-handler/ftls
 ```
 
+## Upgrading to 1.2.0 (Outlook support)
+
+Version 1.2.0 extends the extension to the Outlook PWA. Since it no longer covers only Teams, the repository was renamed from `teams-pwa-link-redirect` to `office-pwa-link-redirect`. GitHub redirects the old URL, so existing clones keep working; optionally update your remote:
+
+```BASH
+git remote set-url origin git@github.com:frederic-klein/office-pwa-link-redirect.git
+```
+
+After pulling, reload the extension in [chrome://extensions/](chrome://extensions/) (unpacked extensions don't pick up manifest changes on their own) and reopen the Outlook PWA or `ctrl+f5`. The handler script and `.desktop` file are unchanged.
+
+Chrome references the unpacked extension by its folder path. If you rename your local clone, select Load unpacked again with the new folder.
+
 ## Upgrading from a version before the `ftl-open` handler script
 
 Earlier versions handled the scheme rewrite with an inline shell pipeline in `firefox-ftl.desktop`. That interpolated the clicked URL into a shell command string, so a crafted `ftl:`/`ftls:` URL could execute arbitrary commands as your user ([#14](https://github.com/frederic-klein/office-pwa-link-redirect/pull/14)). Any page you visited could trigger it.
