@@ -29,17 +29,19 @@ xdg-mime default firefox-ftl.desktop x-scheme-handler/ftl
 xdg-mime default firefox-ftl.desktop x-scheme-handler/ftls
 ```
 
-## Upgrading to 1.2.0 (Outlook support)
+## Upgrading to 2.0.0 (Outlook support)
 
-Version 1.2.0 extends the extension to the Outlook PWA. Since it no longer covers only Teams, the repository was renamed from `teams-pwa-link-redirect` to `office-pwa-link-redirect`. GitHub redirects the old URL, so existing clones keep working; optionally update your remote:
+**Coming from 1.1.1 or earlier, you must also reinstall the handler** — see [the next section](#upgrading-from-a-version-before-the-ftl-open-handler-script). Reloading the extension alone leaves the old, vulnerable handler in place.
+
+Version 2.0.0 extends the extension to the Outlook PWA. Since it no longer covers only Teams, the repository was renamed from `teams-pwa-link-redirect` to `office-pwa-link-redirect`. GitHub redirects the old URL, so existing clones keep working; optionally update your remote:
 
 ```BASH
 git remote set-url origin git@github.com:frederic-klein/office-pwa-link-redirect.git
 ```
 
-After pulling, reload the extension in [chrome://extensions/](chrome://extensions/) (unpacked extensions don't pick up manifest changes on their own) and reopen the Outlook PWA or `ctrl+f5`. The handler script and `.desktop` file are unchanged.
+After pulling, reload the extension in [chrome://extensions/](chrome://extensions/) (unpacked extensions don't pick up manifest changes on their own) and reopen the Outlook PWA or `ctrl+f5`.
 
-Chrome references the unpacked extension by its folder path. If you rename your local clone, select Load unpacked again with the new folder.
+Chrome references the unpacked extension by its folder path. If you rename your local clone or extract a release into a new folder, select Load unpacked again with the new folder.
 
 ## Upgrading from a version before the `ftl-open` handler script
 
